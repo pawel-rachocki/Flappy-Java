@@ -1,8 +1,8 @@
 package enums;
 
 public enum PlayerSize {
-    PLAYER_WIDTH(34),
-    PLAYER_HEIGHT(24);
+    PLAYER_WIDTH(34), //34
+    PLAYER_HEIGHT(24); //24
 
     private final int value;
 

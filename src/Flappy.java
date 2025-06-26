@@ -106,6 +106,15 @@ public class Flappy extends JPanel implements ActionListener,KeyListener{
             Pipe pipe = pipes.get(i);
             graphics.drawImage(pipe.pipeImg, pipe.x, pipe.y, pipe.width, pipe.height, null);
         }
+
+        // score
+        graphics.setColor(Color.BLACK);
+        graphics.setFont(new Font("Arial", Font.PLAIN,32));
+        if(isGameOver){
+            graphics.drawString("Game Over: " + String.valueOf((int)score),10,35);
+        }else{
+            graphics.drawString("Score: " + String.valueOf((int)score),10,35);
+        }
     }
 
     public void move(){
@@ -152,6 +161,15 @@ public class Flappy extends JPanel implements ActionListener,KeyListener{
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_SPACE){
             this.velocityY = -9;
+            if (isGameOver){
+                player.y = playerY;
+                velocityY = 0;
+                pipes.clear();
+                score = 0;
+                isGameOver = false;
+                gameLoop.start();
+                pipesTimer.start();
+            }
 
         }
 
