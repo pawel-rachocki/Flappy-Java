@@ -7,7 +7,7 @@ import javax.swing.*;
 
 
 
-public class Flappy extends JPanel{
+public class Flappy extends JPanel implements ActionListener{
 
     // Assets/Images
     Image backgroundImg;
@@ -22,7 +22,13 @@ public class Flappy extends JPanel{
     int playerHeight = PlayerSize.PLAYER_HEIGHT.getValue();
 
     // Game
+
+    // player logic
     Player player;
+    int velocityY = -6;
+    int gravity = 1;
+
+    Timer gameLoop;
 
 
     Flappy(){
@@ -35,7 +41,13 @@ public class Flappy extends JPanel{
         topPipeImg = new ImageIcon(getClass().getResource("/assets/toppipe.png")).getImage();
         bottomPipeImg = new ImageIcon(getClass().getResource("/assets/bottompipe.png")).getImage();
 
+        // player
         player = new Player(playerX,playerY,playerImg);
+
+        // game timer
+        this.gameLoop = new Timer(1000/60,this);
+        this.gameLoop.start();
+
     }
 
     public void paintComponent(Graphics graphics){
@@ -48,5 +60,19 @@ public class Flappy extends JPanel{
         // BackGround
         graphics.drawImage(backgroundImg,0,0,BoardDimensions.BOARD_WIDTH.getValue(),BoardDimensions.BOARD_HEIGHT.getValue(),null);
         graphics.drawImage(player.playerImg,player.x,player.y,player.width,player.height,null);
+    }
+
+    public void move(){
+        // player
+        velocityY += gravity;
+        player.y += this.velocityY;
+        player.y = Math.max(player.y,0);
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        move();
+        repaint();
     }
 }
