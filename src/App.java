@@ -14,6 +14,7 @@ public class App {
         game.add(flappy);
         game.pack(); // BoardDimensions.BOARD_WIDTH && BoardDimensions.BOARD_HEIGHT excluding title bar
 
+        flappy.requestFocus();
         game.setVisible(true);
 
     }
