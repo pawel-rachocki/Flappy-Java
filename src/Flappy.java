@@ -1,10 +1,12 @@
 import enums.BoardDimensions;
+import enums.PipeSize;
 import enums.PlayerSize;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import javax.swing.*;
 
 
@@ -32,9 +34,12 @@ public class Flappy extends JPanel implements ActionListener,KeyListener{
     int gravity = 1;
 
     ArrayList<Pipe> pipes;
+    Random random = new Random();
 
     Timer gameLoop;
     Timer pipesTimer;
+    boolean isGameOver = false;
+    double score = 0;
 
 
     Flappy(){
@@ -70,8 +75,16 @@ public class Flappy extends JPanel implements ActionListener,KeyListener{
     }
 
     public void placePipes(){
+        int randomPipeY = (int) (pipeY - PipeSize.PIPE_HEIGHT.getValue()/4 - Math.random() * (PipeSize.PIPE_HEIGHT.getValue()/2));
+        int passSpace = BoardDimensions.BOARD_HEIGHT.getValue()/4;
+
         Pipe topPipe = new Pipe(pipeX,pipeY,topPipeImg);
+        topPipe.y = randomPipeY;
         pipes.add(topPipe);
+
+        Pipe bottomPipe = new Pipe(pipeX,pipeY,bottomPipeImg);
+        bottomPipe.y = topPipe.y + PipeSize.PIPE_HEIGHT.getValue() + passSpace;
+        pipes.add(bottomPipe);
 
     }
 
@@ -101,17 +114,39 @@ public class Flappy extends JPanel implements ActionListener,KeyListener{
         player.y += this.velocityY;
         player.y = Math.max(player.y,0);
 
+        // pipes
         for (int i = 0; i < pipes.size(); i++){
             Pipe pipe = pipes.get(i);
             pipe.x += velocityX;
+            if (!pipe.passed && player.x > pipe.x + pipe.width){
+                pipe.passed = true;
+                score +=0.5;
+            }
+            if (collision(player,pipe)){
+                isGameOver = true;
+            }
         }
 
+        if(player.y > BoardDimensions.BOARD_HEIGHT.getValue()){
+            this.isGameOver = true;
+        }
+
+    }
+    public boolean collision(Player player, Pipe pipe){
+        return player.x < pipe.x + pipe.width &&
+                player.x + player.width > pipe.x &&
+                player.y < pipe.y + pipe.height &&
+                player.y + player.height > pipe.y;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         move();
         repaint();
+        if(isGameOver){
+            pipesTimer.stop();
+            gameLoop.stop();
+        }
     }
     @Override
     public void keyPressed(KeyEvent e) {
